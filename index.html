@@ -1,53 +1,72 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Habit Tracker</title>
+<title>Streakboard - Habit Tracker</title>
 <style>
-:root{--bg:#f3f3f3;--fg:#111;--card:#fff;--line:#d4d4d4;--mut:#6b6b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b0b;--fg:#f2f2f2;--card:#161616;--line:#333;--mut:#9a9a9a}}
-:root[data-theme="dark"]{--bg:#0b0b0b;--fg:#f2f2f2;--card:#161616;--line:#333;--mut:#9a9a9a}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--bg:#f1ebdd;--card:#faf6ec;--fg:#1f1c16;--mut:#7b7363;--line:#d9d0bc;--ac:#cf4429;box-sizing:border-box}
+:root[data-theme="dark"]{--bg:#17150f;--card:#1f1c15;--fg:#ece5d3;--mut:#9a927f;--line:#383327;--ac:#ec6a4b}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 Arial,Helvetica,sans-serif}
-#app{max-width:1200px;margin:0 auto;padding:14px}
-h1{font-size:20px;margin:0;letter-spacing:1px}
-h2{font-size:12px;margin:0 0 10px;letter-spacing:1px;text-transform:uppercase}
-.top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
+body{margin:0;min-height:100vh;color:var(--fg);background:var(--bg) radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px) 0 0/5px 5px;font:14px/1.5 "Work Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+#app{max-width:1180px;margin:0 auto;padding:18px 16px 40px}
+h1{display:flex;align-items:center;gap:8px;font:700 26px/1 Fraunces,Georgia,serif;margin:0;letter-spacing:-.5px}
+h1 .lg{color:var(--ac)}
+h2{font:600 17px/1.2 Fraunces,Georgia,serif;margin:0 0 12px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.top h2{border:0;padding:0}
 .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-button,select,input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
-button{cursor:pointer}button.p{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
-.k{background:var(--fg);color:var(--bg);border-radius:10px;padding:12px}.k b{display:block;font-size:24px}.k span{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px}
-.donut{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;margin:auto}
-.donut i{width:48px;height:48px;border-radius:50%;background:var(--fg);display:grid;place-items:center;font:700 12px Arial;color:var(--bg);font-style:normal}
+button,select,input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:3px;padding:6px 11px}
+button{cursor:pointer;background:transparent;border-color:var(--fg);font-weight:500}
+button:hover{background:var(--fg);color:var(--bg)}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}button.p:hover{filter:brightness(.92)}
+input:focus,select:focus{outline:2px solid var(--ac);outline-offset:1px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:16px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:14px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:12px 14px}
+.k b{display:block;font:700 34px/1.1 Fraunces,Georgia,serif}
+.k span{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut)}
+.donut{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;margin:auto}
+.donut i{width:56px;height:56px;border-radius:50%;background:var(--card);display:grid;place-items:center;font:700 15px Fraunces,Georgia,serif;font-style:normal}
+.today{border-left:3px solid var(--ac);background:var(--card);padding:10px 14px;margin-bottom:14px;display:flex;gap:14px;align-items:center;font-family:Fraunces,Georgia,serif;font-size:16px}.today .bar{flex:1}
 .gw{overflow-x:auto}
 table{border-collapse:collapse;font-size:12px}
 th,td{padding:0;text-align:center}
-th.n{position:sticky;left:0;background:var(--card);text-align:left;padding:2px 10px 2px 0;white-space:nowrap;z-index:1;min-width:150px;font-weight:600}
-.dh{font-size:10px;color:var(--mut);min-width:28px;padding:2px}.dh.t{background:var(--fg);color:var(--bg);border-radius:4px}
-.tk{width:24px;height:24px;margin:2px;padding:0;border-radius:5px;border:1px solid var(--line);background:var(--card)}
-.tk.on{background:var(--fg);border-color:var(--fg);color:var(--bg)}
-td input{width:26px;margin:1px;padding:2px 0;font-size:11px;text-align:center}
-td select{width:28px;margin:1px;padding:2px 0;font-size:11px;appearance:none;text-align:center}
-.bars{display:flex;align-items:flex-end;gap:2px;height:110px}
+th.n{position:sticky;left:0;background:var(--card);text-align:left;padding:2px 12px 2px 0;white-space:nowrap;z-index:1;min-width:160px;font-weight:500}
+.dh{font-size:10px;color:var(--mut);min-width:30px;padding:3px}.dh.t{background:var(--ac);color:#fff;border-radius:2px}
+.tk{width:26px;height:26px;margin:2px;padding:0;border-radius:3px;border:1px solid var(--line);background:transparent;color:#fff}
+.tk:hover{background:transparent;color:inherit;border-color:var(--fg)}
+.tk.on,.tk.on:hover{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+td input{width:28px;margin:1px;padding:3px 0;font-size:11px;text-align:center;border-radius:2px}
+td select{width:30px;margin:1px;padding:3px 0;font-size:11px;appearance:none;text-align:center;border-radius:2px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:120px}
 .bars div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center;font-size:9px;color:var(--mut)}
-.bars i{width:100%;background:var(--fg);border-radius:3px 3px 0 0;min-height:1px}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
-.an{width:100%}.an td,.an th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}
-.bar{height:8px;background:var(--line);border-radius:4px;min-width:80px}.bar i{display:block;height:100%;background:var(--fg);border-radius:4px}
-.ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.ins div{border:1px solid var(--line);border-radius:8px;padding:8px}.ins span{display:block;font-size:11px;color:var(--mut)}
-textarea{width:100%;height:110px;font:11px monospace;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+.bars i{width:100%;background:var(--fg);opacity:.85;min-height:2px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.an{width:100%}.an td,.an th{padding:6px;border-bottom:1px solid var(--line);text-align:left;font-size:12px;font-weight:500}
+.bar{height:6px;background:var(--line);min-width:80px}.bar i{display:block;height:100%;background:var(--fg)}
+.ins div{border-bottom:1px dotted var(--mut);padding:6px 0;font-weight:600;display:flex;flex-direction:row-reverse;justify-content:space-between}
+.ins span{font-weight:400;color:var(--mut)}
+textarea{width:100%;height:110px;font:11px monospace;background:var(--card);color:var(--fg);border:1px solid var(--line)}
 .hr{display:flex;gap:6px;margin-bottom:6px}.hr input:first-child{width:46px;text-align:center}.hr input:nth-child(2){flex:1}
-</style></head><body><div id="app"><p style="text-align:center;margin-top:80px;color:#888">Loading…</p></div>
+.hero{max-width:400px;margin:70px auto}.hero h1{font-size:34px}.hero p.sub{color:var(--mut);margin:10px 0 22px}
+.hero .card{padding:22px}.hero label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}.hero input{width:100%;margin-bottom:14px}.hero a{color:var(--ac);font-size:13px;cursor:pointer;text-decoration:underline}
+.todo{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.todo .tk{flex:none;margin:0}.todo .tx{flex:1;word-break:break-word}
+.todo.dn .tx{text-decoration:line-through;opacity:.45}
+.todo small{color:var(--mut);font-size:11px;border:1px solid var(--line);padding:1px 7px}
+.todo small.late{color:var(--ac);border-color:var(--ac)}
+.todo .x{border:0;color:var(--mut);padding:4px 8px}.todo .x:hover{background:transparent;color:var(--ac)}
+.fbm{font:14px/1.5 "Work Sans",system-ui,sans-serif;height:100px}
+.fbi{padding:8px 0;border-bottom:1px solid var(--line)}.fbi small{color:var(--mut)}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap">
+</head><body><div id="app"><p style="text-align:center;margin-top:80px;color:#888">Loading…</p></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 /* ---- Supabase (public URL + publishable key are safe in the browser) ---- */
+const HASH=location.hash,HERR=(HASH.match(/error_description=([^&]+)/)||[])[1];
 const SB=supabase.createClient('https://bdygglgsftpcsvfjszna.supabase.co','sb_publishable_2gBTT2MSxwd7mIrgcTViaw_eRyklSuL');
 const DEF=[["Wake up at 05:00","⏰"],["Gym","💪"],["Reading / Learning","📖"],["Day Planning","🗓️"],["No Gooning","💧"],["Project Work","🎯"],["No Alcohol","🍷"],["Social Media Detox","📵"],["Goal Journaling","📓"],["Cold Shower","🚿"],["10k Steps","🚶"],["Plan Tomorrow","📝"]];
-let S=null,U=null;
-const now=new Date();let Y=now.getFullYear(),M=now.getMonth(),edit=false,bk=false,pend=null;
+let S=null,U=null,recov=/type=recovery/.test(HASH);
+const now=new Date();let Y=now.getFullYear(),M=now.getMonth(),edit=false,bk=false,pend=null,fb=false;
 const pad=n=>String(n).padStart(2,'0'),ds=d=>`${Y}-${pad(M+1)}-${pad(d)}`,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function calc(){
  const n=new Date(Y,M+1,0).getDate(),t=new Date(),ref=(t.getFullYear()==Y&&t.getMonth()==M)?t.getDate():(new Date(Y,M,1)<t?n:0);
@@ -64,17 +83,20 @@ function RR(){
  const wm=Math.max(...wk.map(x=>x.v)),ls=c.rows.reduce((a,r)=>r.best>a.best?r:a,{best:0}),top=[...c.rows].sort((a,b)=>b.act-a.act);
  const low=c.done?[...c.rows].sort((a,b)=>a.act-b.act)[0]:null;
  const tdy=(now.getFullYear()==Y&&now.getMonth()==M)?now.getDate():0;
- let h=`<div class="top"><h1>HABIT TRACKER</h1><div class="row"><button onclick="mv(-1)">‹</button><b>${new Date(Y,M).toLocaleString('en',{month:'long',year:'numeric'})}</b><button onclick="mv(1)">›</button>
- <button onclick="edit=!edit;R()">${edit?'Done':'✎ Habits'}</button><button onclick="exp()">⬇ Export</button><button onclick="so()">Sign out</button><button onclick="th()">◐</button></div></div>`;
- if(edit)h+=`<div class="card"><h2>Customize habits</h2>${S.habits.map(x=>`<div class="hr"><input value="${esc(x.emoji)}" onchange="ed('${x.id}','emoji',this.value)"><input value="${esc(x.name)}" onchange="ed('${x.id}','name',this.value)"><button onclick="mvh('${x.id}',-1)">↑</button><button onclick="mvh('${x.id}',1)">↓</button><button onclick="del('${x.id}')">${pend==x.id?'Sure?':'🗑'}</button></div>`).join('')}
+ let h=`<div class="top"><h1><svg class="lg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.5l5.5 5.5L21 5.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Streakboard</h1><div class="row"><button onclick="mv(-1)">‹</button><b>${new Date(Y,M).toLocaleString('en',{month:'long',year:'numeric'})}</b><button onclick="mv(1)">›</button>
+ <button onclick="edit=!edit;R()">${edit?'Done':'Edit habits'}</button><button onclick="exp()">Export</button><button onclick="fbOpen()">Feedback</button><button onclick="so()">Sign out</button><button onclick="th()">Night / Day</button></div></div>`;
+ if(tdy){const dn=c.H.filter(x=>c.tick(x,tdy)).length,n=c.H.length;h+=`<div class="today"><b>${n&&dn==n?'All done today.':'Today: '+dn+'/'+n+' habits'}</b><div class="bar"><i style="width:${n?dn/n*100:0}%"></i></div></div>`}
+ if(fb)h+=fbCard();
+ if(edit)h+=`<div class="card"><h2>Customize habits</h2>${S.habits.map(x=>`<div class="hr"><input value="${esc(x.emoji)}" onchange="ed('${x.id}','emoji',this.value)"><input value="${esc(x.name)}" onchange="ed('${x.id}','name',this.value)"><button onclick="mvh('${x.id}',-1)">↑</button><button onclick="mvh('${x.id}',1)">↓</button><button onclick="del('${x.id}')">${pend==x.id?'Sure?':'Delete'}</button></div>`).join('')}
  <div class="hr"><input id="ne" placeholder="🙂"><input id="nn" placeholder="New habit name"><button class="p" onclick="add()">Add</button></div></div>`;
  if(bk)h+=`<div class="card"><h2>Backup / restore</h2><p style="margin:0 0 8px;color:var(--mut)">Copy this text and keep it safe. To restore, paste a backup here and press Restore.</p><textarea id="bt">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:6px"><button class="p" onclick="rs()">Restore</button></div></div>`;
  h+=`<div class="kpis"><div class="k"><span>Goal</span><b>${c.goal}</b></div><div class="k"><span>Completed</span><b>${c.done}</b></div><div class="k"><span>Left</span><b>${c.goal-c.done}</b></div>
- <div class="k" style="display:grid;place-items:center"><div class="donut" style="background:conic-gradient(var(--bg) ${pct*360}deg,#555 0)"><i>${P(pct)}</i></div></div></div>`;
+ <div class="k" style="display:grid;place-items:center"><div class="donut" style="background:conic-gradient(var(--ac) ${pct*360}deg,var(--line) 0)"><i>${P(pct)}</i></div></div></div>`;
  h+=`<div class="card gw"><table><tr><th class="n"></th>${c.days.map(d=>`<th class="dh ${d==tdy?'t':''}">${'SMTWTFS'[new Date(Y,M,d).getDay()]}<br><b>${d}</b></th>`).join('')}</tr>
  ${c.H.map(x=>`<tr><th class="n">${esc(x.emoji)} ${esc(x.name)}</th>${c.days.map(d=>`<td><button class="tk ${c.tick(x,d)?'on':''}" onclick="tg('${x.id}',${d})">${c.tick(x,d)?'✓':''}</button></td>`).join('')}</tr>`).join('')}
  <tr><th class="n">Mood (1-5)</th>${c.days.map(d=>`<td><select onchange="lgv(${d},'mood',this.value)"><option></option>${[1,2,3,4,5].map(v=>`<option ${lg[d-1].mood==v?'selected':''}>${v}</option>`).join('')}</select></td>`).join('')}</tr>
  <tr><th class="n">Sleep (hrs)</th>${c.days.map(d=>`<td><input type="number" step="0.5" min="0" max="24" value="${lg[d-1].sleep??''}" onchange="lgv(${d},'sleep',this.value)"></td>`).join('')}</tr></table></div>`;
+ h+=todoCard();
  h+=`<div class="g2"><div class="card"><h2>Daily progress</h2><div class="bars">${c.days.map((d,i)=>`<div title="Day ${d}: ${P(c.daily[i])}"><i style="height:${c.daily[i]*100}%"></i>${d}</div>`).join('')}</div></div>
  <div class="card"><h2>Completion by weekday</h2><div class="bars">${wk.map(x=>`<div title="${P(x.v)}"><i style="height:${x.v*100}%"></i>${x.nm}</div>`).join('')}</div></div></div>`;
  h+=`<div class="g2"><div class="card"><h2>Analysis</h2><table class="an"><tr><th>Habit</th><th>Done</th><th>Progress</th><th>%</th><th>Streak</th><th>Best</th></tr>
@@ -89,20 +111,25 @@ function msg(t){const d=document.createElement('div');d.textContent=t;d.style.cs
 async function run(q){const r=await q;if(r.error){msg(r.error.message);await load();R()}return r}
 async function load(){
  const a=`${Y}-${pad(M+1)}-01`,b=ds(new Date(Y,M+1,0).getDate());
- const [h,c,l]=await Promise.all([SB.from('habits').select('id,name,emoji,sort').eq('archived',false).order('sort').order('created_at'),
-  SB.from('checkins').select('habit_id,day').gte('day',a).lte('day',b),SB.from('daily_logs').select('day,mood,sleep').gte('day',a).lte('day',b)]);
+ const [h,c,l,t]=await Promise.all([SB.from('habits').select('id,name,emoji,sort').eq('archived',false).order('sort').order('created_at'),
+  SB.from('checkins').select('habit_id,day').gte('day',a).lte('day',b),SB.from('daily_logs').select('day,mood,sleep').gte('day',a).lte('day',b),SB.from('todos').select('id,text,done,due,created_at').order('created_at')]);
  if(h.error)msg(h.error.message);
- S={habits:h.data||[],checks:{},logs:{}};
+ S={habits:h.data||[],checks:{},logs:{},todos:t.data||[],tErr:!!t.error};
  (c.data||[]).forEach(x=>S.checks[x.habit_id+'|'+x.day]=1);
  (l.data||[]).forEach(x=>{const o={};if(x.mood!=null)o.mood=x.mood;if(x.sleep!=null)o.sleep=+x.sleep;S.logs[x.day]=o})}
 async function start(){
  const h=await SB.from('habits').select('id',{count:'exact',head:true});
  if(!h.error&&!h.count&&!(U.user_metadata&&U.user_metadata.seeded)){await SB.from('habits').insert(DEF.map((x,i)=>({name:x[0],emoji:x[1],sort:i})));await SB.auth.updateUser({data:{seeded:true}})}
  await load();R()}
-function R(){if(!U)return login();if(!S){$('app').innerHTML='<p style="text-align:center;margin-top:80px;color:var(--mut)">Loading…</p>';return}RR()}
-function login(){$('app').innerHTML=`<div class="card" style="max-width:360px;margin:60px auto"><h1 style="margin-bottom:10px">HABIT TRACKER</h1><p style="color:var(--mut);margin:0 0 12px">Sign in to sync your habits across all your devices.</p>
- <input id="em" type="email" placeholder="Email" autocomplete="email" style="width:100%;margin-bottom:8px"><input id="pw" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password" style="width:100%;margin-bottom:10px">
- <div class="row"><button class="p" onclick="auth('in')">Sign in</button><button onclick="auth('up')">Create account</button></div><p id="am" style="color:var(--mut);font-size:12px"></p></div>`}
+function R(){if(recov&&U)return rec();if(!U)return login();if(!S){$('app').innerHTML='<p style="text-align:center;margin-top:80px;color:var(--mut)">Loading…</p>';return}RR()}
+function login(){$('app').innerHTML=`<div class="hero"><h1><svg class="lg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.5l5.5 5.5L21 5.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Streakboard</h1><p class="sub">A plain habit tracker. Sign in to pick up where you left off.</p>
+ <div class="card"><label for="em">Email</label><input id="em" type="email" autocomplete="email"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+ <div class="row"><button class="p" onclick="auth('in')">Sign in</button><button onclick="auth('up')">Create account</button></div>
+ <p style="margin:14px 0 0"><a onclick="fp()">Forgot your password?</a></p><p id="am" style="color:var(--mut);font-size:12px;margin:8px 0 0"></p></div></div>`;if(HERR)$('am').textContent=decodeURIComponent(HERR.replace(/\+/g,' '))+'. Request a new reset link below.'}
+function rec(){$('app').innerHTML=`<div class="hero"><h1><svg class="lg" viewBox="0 0 24 24" width="24" height="24"><path d="M3 13.5l5.5 5.5L21 5.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Streakboard</h1><p class="sub">Choose a new password</p><div class="card"><input id="np" type="password" placeholder="New password (min 6 characters)" autocomplete="new-password"><button class="p" onclick="upd()">Update password</button><p id="am" style="color:var(--mut);font-size:12px"></p></div></div>`}
+async function fp(){const email=$('em').value.trim();if(!email){$('am').textContent='Type your email above first.';return}
+ const r=await SB.auth.resetPasswordForEmail(email,{redirectTo:location.origin});$('am').textContent=r.error?r.error.message:'If that email has an account, a reset link is on its way.'}
+async function upd(){const r=await SB.auth.updateUser({password:$('np').value});if(r.error){$('am').textContent=r.error.message;return}recov=false;history.replaceState(null,'',location.pathname);S=null;R();msg('Password updated');setTimeout(start,0)}
 async function auth(k){const email=$('em').value.trim(),password=$('pw').value;$('am').textContent='...';
  const r=k=='in'?await SB.auth.signInWithPassword({email,password}):await SB.auth.signUp({email,password});
  if(r.error){$('am').textContent=r.error.message;return}
@@ -125,7 +152,34 @@ async function exp(){msg('Preparing export...');const rows=['type,habit,date,val
  const hs=await SB.from('habits').select('id,name');(hs.data||[]).forEach(h=>nm[h.id]=h.name);
  for(let i=0;;i+=1000){const r=await SB.from('checkins').select('habit_id,day').order('day').order('habit_id').range(i,i+999);(r.data||[]).forEach(x=>rows.push(`check,"${(nm[x.habit_id]||'').replace(/"/g,'""')}",${x.day},1`));if(!r.data||r.data.length<1000)break}
  for(let i=0;;i+=1000){const r=await SB.from('daily_logs').select('day,mood,sleep').order('day').range(i,i+999);(r.data||[]).forEach(x=>{if(x.mood!=null)rows.push(`log,mood,${x.day},${x.mood}`);if(x.sleep!=null)rows.push(`log,sleep,${x.day},${x.sleep}`)});if(!r.data||r.data.length<1000)break}
+ const tq=await SB.from('todos').select('text,due,done');(tq.data||[]).forEach(x=>rows.push(`todo,"${x.text.replace(/"/g,'""')}",${x.due||''},${x.done?1:0}`));
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='habit-tracker-export.csv';a.click()}
-function th(){const r=document.documentElement,d=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'}
-SB.auth.onAuthStateChange((ev,ses)=>{const u=ses?ses.user:null;if((u&&u.id)===(U&&U.id)&&ev!=='INITIAL_SESSION')return;U=u;S=null;if(u)setTimeout(start,0);else R()});
+function fbCard(){
+ const L=S.fbErr?'<p style="color:var(--mut)">Feedback needs its database table. Run the feedback SQL in Supabase, then refresh.</p>':(S.fbl||[]).map(x=>`<div class="fbi"><b>${esc(x.kind)}</b> <small>${x.created_at.slice(0,10)} · ${esc(x.status)}</small><div>${esc(x.message)}</div></div>`).join('')||'<p style="color:var(--mut);margin:0">No reports yet.</p>';
+ return `<div class="card"><div class="top" style="margin:0 0 10px"><h2 style="margin:0">Report a problem or send feedback</h2><button onclick="fbOpen()">Close</button></div>
+ <div class="row" style="margin-bottom:8px"><select id="fk"><option>Bug</option><option>Complaint</option><option>Suggestion</option><option>Other</option></select></div>
+ <textarea id="fm" class="fbm" maxlength="1000" placeholder="What went wrong, or what would you like to see? The more detail, the better."></textarea>
+ <div class="row" style="margin:8px 0 14px"><button class="p" onclick="fbSend()">Send</button><small style="color:var(--mut)">Only you and the app owner can see this.</small></div>
+ <h2 style="font-size:14px">Your recent reports</h2>${L}</div>`}
+async function fbOpen(){fb=!fb;if(fb){const r=await SB.from('feedback').select('id,kind,message,status,created_at').order('created_at',{ascending:false}).limit(10);S.fbl=r.data||[];S.fbErr=!!r.error}R()}
+async function fbSend(){const m=$('fm').value.trim();if(!m)return msg('Write something first.');
+ const r=await SB.from('feedback').insert({kind:$('fk').value,message:m,context:navigator.userAgent.slice(0,200)+' | '+location.host}).select('id,kind,message,status,created_at').single();
+ if(r.error)return msg(r.error.message);(S.fbl=S.fbl||[]).unshift(r.data);msg('Thanks, your report was sent.');R()}
+let tf='all';
+function todoCard(){
+ if(S.tErr)return `<div class="card"><h2>Plans</h2><p style="color:var(--mut);margin:0">The to-do pad needs its database table. Run the todos SQL in Supabase, then refresh.</p></div>`;
+ const T=[...S.todos].sort((a,b)=>(a.done-b.done)||(a.due||'9999').localeCompare(b.due||'9999')||a.created_at.localeCompare(b.created_at));
+ const open=T.filter(x=>!x.done).length,dn=T.length-open,L=T.filter(x=>tf=='all'||(tf=='open'?!x.done:x.done)),td=new Date().toISOString().slice(0,10);
+ return `<div class="card"><div class="top" style="margin:0 0 10px"><h2 style="margin:0">Plans <span style="text-transform:none;letter-spacing:0">· ${open} open · ${dn} done</span></h2><div class="row">${['all','open','done'].map(f=>`<button class="${tf==f?'p':''}" onclick="tdF('${f}')">${f}</button>`).join('')}${dn?'<button onclick="tdClr()">Clear done</button>':''}</div></div>
+ <div class="row" style="margin-bottom:10px"><input id="tt" placeholder="Add a plan and press Enter…" style="flex:1;min-width:180px" onkeydown="if(event.key=='Enter')tdAdd()"><input id="tdd" type="date"><button class="p" onclick="tdAdd()">Add</button></div>
+ ${L.length?L.map(x=>`<div class="todo ${x.done?'dn':''}"><button class="tk ${x.done?'on':''}" onclick="tdTog('${x.id}')">${x.done?'✓':''}</button><span class="tx">${esc(x.text)}</span>${x.due?`<small class="${!x.done&&x.due<td?'late':''}">${x.due}</small>`:''}<button class="x" onclick="tdDel('${x.id}')">✕</button></div>`).join(''):'<p style="color:var(--mut);margin:0">Nothing here yet. Add your first plan above.</p>'}</div>`}
+function tdF(f){tf=f;R()}
+async function tdAdd(){const t=$('tt').value.trim();if(!t)return;const due=$('tdd').value||null;
+ const r=await run(SB.from('todos').insert({text:t,due}).select('id,text,done,due,created_at').single());if(r.data){S.todos.push(r.data);R()}}
+async function tdTog(id){const x=S.todos.find(y=>y.id==id);if(!x)return;x.done=!x.done;R();await run(SB.from('todos').update({done:x.done,done_at:x.done?new Date().toISOString():null}).eq('id',id))}
+async function tdDel(id){S.todos=S.todos.filter(y=>y.id!=id);R();await run(SB.from('todos').delete().eq('id',id))}
+async function tdClr(){S.todos=S.todos.filter(y=>!y.done);R();await run(SB.from('todos').delete().eq('done',true))}
+function th(){const r=document.documentElement,n=r.dataset.theme=='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('st-theme',n)}catch(e){}}
+try{const t=localStorage.getItem('st-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+SB.auth.onAuthStateChange((ev,ses)=>{const u=ses?ses.user:null;if(ev==='PASSWORD_RECOVERY'||(recov&&u&&!U)){recov=true;U=u;R();return}if(recov&&ev!=='SIGNED_OUT')return;if((u&&u.id)===(U&&U.id)&&ev!=='INITIAL_SESSION')return;U=u;S=null;if(u)setTimeout(start,0);else R()});
 </script></body></html>
